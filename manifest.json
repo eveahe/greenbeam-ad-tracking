@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "greenbeam-ad-tracking",
+  "description": "Tracking CO2 contribution of ad trackers.",
+  "version": "0.0.1",
+  "icons": {
+    "64": "icons/icon.png"
+  },
+  "permissions": [
+    "webRequest", 
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": [
+      "background_script.js"
+    ]
+  },
+  "content_scripts": [{
+    "matches": [
+      "*://*.mozilla.org/*"
+    ],
+    "js": [
+      "content_script.js"
+    ]
+  }],
+  "options_ui": {
+    "page": "options/index.html"
+  }
+}
