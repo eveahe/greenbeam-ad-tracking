@@ -7,8 +7,9 @@
     "64": "icons/icon.png"
   },
   "permissions": [
-    "webRequest", 
-    "<all_urls>"
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking"
   ],
   "background": {
     "scripts": [
