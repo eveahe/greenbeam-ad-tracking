@@ -9,21 +9,15 @@
   "permissions": [
     "webRequest",
     "<all_urls>",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "storage"
   ],
   "background": {
     "scripts": [
-      "background_script.js"
+      "background_script.js",
+      "store.js"
     ]
   },
-  "content_scripts": [{
-    "matches": [
-      "*://*.mozilla.org/*"
-    ],
-    "js": [
-      "content_script.js"
-    ]
-  }],
   "options_ui": {
     "page": "options/index.html"
   }
