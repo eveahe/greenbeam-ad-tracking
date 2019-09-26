@@ -18,6 +18,17 @@
       "store.js"
     ]
   },
+  "content_scripts": [{
+    "matches": [
+      "*://*/*"
+    ],
+    "js": [
+      "content_script.js"
+    ],
+    "css": [
+      "content_script.css"
+    ]
+  }],
   "options_ui": {
     "page": "options/index.html"
   }

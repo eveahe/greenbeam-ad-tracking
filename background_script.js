@@ -10,19 +10,13 @@ async function checkFirstRun() {
 
 checkFirstRun()
 
-// import the parse domain module
-// const parseDomain = require("parse-domain");
-
 // function logURL(requestDetails) {
 //     if (requestDetails.url !== 'https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/entities.json') {
 //         console.log("Test Test logUrl: " + requestDetails.url)
-//         let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
 
-//         filter.ondata = event => {
-//             console.log(event.data);
-//         }
 //     }
 // }
+
 
 // browser.webRequest.onHeadersReceived.addListener(
 //     logURL, {
@@ -67,6 +61,17 @@ function extractHostName(url) {
     return hostname;
 }
 
+//If the "tracker" is the same as the site we're visiting, we shouldn't log.
+function matchingOrigin(a, o) {
+    if (a.includes(o)) {
+        return true;
+    } else if (o === undefined) {
+        console.log(Err)
+    } else {
+        return false;
+    }
+}
+
 function checkUrlIsTracker(requestDetails) {
     var urlHostName = extractHostName(requestDetails.url);
     //giving our disconnect data list some time to load. 
@@ -75,20 +80,31 @@ function checkUrlIsTracker(requestDetails) {
         for (var i = 0; i < jsonLength; i++) {
             var trackerName = Object.keys(disconnectData)[i];
             var trackerUrlArray = disconnectData[trackerName].resources;
+            //We're checking to see whether the hostname is contained within any of the resource arrays.
             if (trackerUrlArray.some(function (v) {
                     return urlHostName.indexOf(v) >=
                         0;
                 })) {
-                console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`)
-                let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
+                if (!matchingOrigin(urlHostName, extractHostName(requestDetails.originUrl))) {
+                    console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`);
+                    let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
+                    // console.log("filter test " + filter.ondata);
+                    addTrackerData(db, trackerName, urlHostName, 0.005);
+                    let size;
+                    // filter.ondata = event => {
+                    //     size = event.data.byteLength;
+                    //     console.log(trackerName);
 
-                filter.ondata = event => {
-                    console.log(event.data);
+                    // }
+
                 }
             }
         }
     }
 }
+
+
+
 
 browser.webRequest.onHeadersReceived.addListener(
     checkUrlIsTracker, {
