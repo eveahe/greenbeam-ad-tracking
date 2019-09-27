@@ -10,23 +10,6 @@ async function checkFirstRun() {
 
 checkFirstRun()
 
-// function logURL(requestDetails) {
-//     if (requestDetails.url !== 'https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/entities.json') {
-//         console.log("Test Test logUrl: " + requestDetails.url)
-
-//     }
-// }
-
-
-// browser.webRequest.onHeadersReceived.addListener(
-//     logURL, {
-//         urls: ["<all_urls>"]
-//     },
-//     ["blocking", "responseHeaders"]
-
-// );
-
-
 function loadDisconnectJson() {
     var parseJson = function (response) {
         return response.json()
@@ -73,37 +56,38 @@ function matchingOrigin(a, o) {
 }
 
 function checkUrlIsTracker(requestDetails) {
-    var urlHostName = extractHostName(requestDetails.url);
-    //giving our disconnect data list some time to load. 
-    if (disconnectData !== undefined) {
-        var jsonLength = Object.keys(disconnectData).length;
-        for (var i = 0; i < jsonLength; i++) {
-            var trackerName = Object.keys(disconnectData)[i];
-            var trackerUrlArray = disconnectData[trackerName].resources;
-            //We're checking to see whether the hostname is contained within any of the resource arrays.
-            if (trackerUrlArray.some(function (v) {
-                    return urlHostName.indexOf(v) >=
-                        0;
-                })) {
-                if (!matchingOrigin(urlHostName, extractHostName(requestDetails.originUrl))) {
-                    console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`);
-                    let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
-                    // console.log("filter test " + filter.ondata);
-                    addTrackerData(db, trackerName, urlHostName, extractHostName(requestDetails.originUrl), 0.005);
-                    let size;
-                    // filter.ondata = event => {
-                    //     size = event.data.byteLength;
-                    //     console.log(trackerName);
-
-                    // }
+    //We need to open up a filter on the http request stream in order to get bytelength 
+    //All the other attributes exist in the response header.
+    let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
+    filter.ondata = event => {
+        var urlHostName = extractHostName(requestDetails.url);
+        //Giving our disconnect data list some time to load. 
+        if (disconnectData !== undefined) {
+            var jsonLength = Object.keys(disconnectData).length;
+            for (var i = 0; i < jsonLength; i++) {
+                var trackerName = Object.keys(disconnectData)[i];
+                var trackerUrlArray = disconnectData[trackerName].resources;
+                let size;
+                size = event.data.byteLength;
+                //We're checking to see whether the hostname is contained within any of the resource arrays.
+                if (trackerUrlArray.some(function (v) {
+                        return urlHostName.indexOf(v) >=
+                            0;
+                    })) {
+                    if (!matchingOrigin(urlHostName, extractHostName(requestDetails.originUrl))) {
+                        console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`);
+                        addTrackerData(db, trackerName, urlHostName, extractHostName(requestDetails.originUrl), size);
+                    }
 
                 }
             }
         }
+        filter.write(event.data);
+    }
+    filter.onstop = event => {
+        filter.disconnect();
     }
 }
-
-
 
 
 browser.webRequest.onHeadersReceived.addListener(

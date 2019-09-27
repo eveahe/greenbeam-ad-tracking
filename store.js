@@ -47,7 +47,7 @@ function addTrackerData(db, t, tl, to, s) {
     let tx = db.transaction(['trackers'], 'readwrite')
     let store = tx.objectStore('trackers');
 
-    // Put the sticky note into the object store
+    // Put the trackers in the object store
     let tracker = {
         trackername: t,
         trackerlink: tl,
@@ -73,7 +73,6 @@ function getAndDisplayTrackers() {
     let tx = db.transaction(['trackers'], 'readonly');
     let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
     // we collect in the allTrackers array
-    // let req = store.openCursor();
     let allTrackers = [];
 
     var index = store.index('trackerorigin');
@@ -87,8 +86,7 @@ function getAndDisplayTrackers() {
             allTrackers.push(cursor.value);
             cursor.continue();
         } else {
-            console.log(allTrackers)
-            return allTrackers
+            console.log(allTrackers[0].trackerlink)
         }
     }
     req.onerror = function (event) {
@@ -100,14 +98,14 @@ function getAndDisplayTrackers() {
 function handleMessage(request, sender, sendResponse) {
     console.log("Message from the content script: " +
         request.greeting);
-    console.log(`testing testing: ${getAndDisplayTrackers()}`)
+    // console.log(`I can send you trackers!! ${tracker}`)
     sendResponse({
-        response: `I can send you trackers!! ${getAndDisplayTrackers('www.nytimes.com')}`
+        response: `I can send you trackers!!`
     });
 }
 
-browser.runtime.onMessage.addListener(handleMessage);
 
+browser.runtime.onMessage.addListener(handleMessage);
 
 
 // setInterval(getAndDisplayTrackers, 10000)
