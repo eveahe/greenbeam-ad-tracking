@@ -89,7 +89,7 @@ function checkUrlIsTracker(requestDetails) {
                     console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`);
                     let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
                     // console.log("filter test " + filter.ondata);
-                    addTrackerData(db, trackerName, urlHostName, 0.005);
+                    addTrackerData(db, trackerName, urlHostName, extractHostName(requestDetails.originUrl), 0.005);
                     let size;
                     // filter.ondata = event => {
                     //     size = event.data.byteLength;
