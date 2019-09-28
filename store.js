@@ -68,7 +68,7 @@ function addTrackerData(db, t, tl, to, s) {
 
 }
 
-function getAndDisplayTrackers() {
+function getAndDisplayTrackers(currentURL) {
     let tx = db.transaction(['trackers'], 'readonly');
     let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
     // we collect in the allTrackers array
@@ -81,7 +81,7 @@ function getAndDisplayTrackers() {
     var index = store.index('trackerorigin');
     //Note that right now this is just filtering for origins matching the NYTimes.
     //Should soon be changed to just the current origin tab. 
-    var singleKeyRange = IDBKeyRange.only('www.nytimes.com');
+    var singleKeyRange = IDBKeyRange.only(currentURL);
     let req = index.openCursor(singleKeyRange, 'prev')
 
     req.onsuccess = function (event) {
@@ -108,8 +108,9 @@ function getAndDisplayTrackers() {
 
 function handleMessage(request, sender, sendResponse) {
     // console.log("Message from the content script: " +
-    //     request.greeting);
-    getAndDisplayTrackers()
+    //     extractHostName(request.url));
+    // console.log(request)
+    getAndDisplayTrackers(extractHostName(request.url))
     sendResponse({
         response: `I can send you trackers!!`
     });

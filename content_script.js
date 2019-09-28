@@ -24,7 +24,8 @@ function handleError(error) {
 
 function sendDataMessage() {
     var sending = browser.runtime.sendMessage({
-        greeting: 'sendtrackers!'
+        greeting: 'sendtrackers!',
+        url: document.location.href
     });
     sending.then(handleResponse, handleError);
 }
