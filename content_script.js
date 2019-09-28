@@ -7,7 +7,6 @@ function publishTrackers() {
     clickMe.id = "clickMe"
     clickMe.textContent = "click me!!"
     trackerDiv.appendChild(clickMe);
-
 }
 
 // if (!trackerDiv) {
@@ -29,11 +28,5 @@ function sendDataMessage() {
     });
     sending.then(handleResponse, handleError);
 }
-document.addEventListener("click", sendDataMessage
 
-    // function (event) {
-    //     if (!event.target.matches('#clickMe')) {
-    //         return;
-    //     }
-    // sendDataMessage
-);
+document.getElementById('testButton').addEventListener("click", sendDataMessage);

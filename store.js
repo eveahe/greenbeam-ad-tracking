@@ -1,6 +1,8 @@
 //Here is where the indexedDB stuff starts.
 //Inspired by this demo: https://hacks.mozilla.org/2012/02/storing-images-and-files-in-indexeddb/
 ///and this tutorial: https://medium.com/@AndyHaskell2013/build-a-basic-web-app-with-indexeddb-8ab4f83f8bda
+//Using the 1Byte estimates from TheShiftProject: 
+
 
 let db;
 
@@ -62,59 +64,69 @@ function addTrackerData(db, t, tl, to, s) {
     };
     store.add(tracker);
 
+    // Wait for the database transaction to complete
+    // tx.oncomplete = function () {
+    //     console.log('stored tracker!')
+    // }
     tx.onerror = function (event) {
         alert('error storing tracker ' + event.target.errorCode);
     }
 
 }
 
-function getAndDisplayTrackers(currentURL) {
-    let tx = db.transaction(['trackers'], 'readonly');
-    let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
-    // we collect in the allTrackers array
-    let allTrackers = [];
-    let sizeSum = 0;
-    let kWHt = 0;
-    let gCO2 = 0;
+async function getAndDisplayTrackers(currentURL) {
+    return new Promise((resolve, reject) => {
+        let tx = db.transaction(['trackers'], 'readonly');
+        let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
+        // we collect in the allTrackers array
+        let allTrackers = [];
+        let sizeSum = 0;
+        let kWHt = 0;
+        let gCO2 = 0;
 
 
-    var index = store.index('trackerorigin');
-    //Note that right now this is just filtering for origins matching the NYTimes.
-    //Should soon be changed to just the current origin tab. 
-    var singleKeyRange = IDBKeyRange.only(currentURL);
-    let req = index.openCursor(singleKeyRange, 'prev')
+        var index = store.index('trackerorigin');
+        //Note that right now this is just filtering for origins matching the NYTimes.
+        //Should soon be changed to just the current origin tab. 
+        var singleKeyRange = IDBKeyRange.only(currentURL);
+        let req = index.openCursor(singleKeyRange, 'prev')
 
-    req.onsuccess = function (event) {
-        // The result of req.onsuccess is an IDBCursor
-        let cursor = event.target.result;
-        if (cursor != null) {
-            allTrackers.push(cursor.value);
-            cursor.continue();
-        } else {
-            //Calcating the amount for this domain
-            allTrackers.forEach(function (e) {
-                sizeSum += e.size;
-            })
-            kWHt = (sizeSum * kWhPerByteDataCenter) + (sizeSum * kWhPerByteNetwork)
-            gCO2 = (defaultCarbonIntensityFactorIngCO2PerKWh * kWHt)
-            console.log(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`)
+        req.onsuccess = function (event) {
+            // The result of req.onsuccess is an IDBCursor
+            let cursor = event.target.result;
+            if (cursor != null) {
+                allTrackers.push(cursor.value);
+                cursor.continue();
+            } else {
+                //Calcating the amount for this domain
+                allTrackers.forEach(function (e) {
+                    sizeSum += e.size;
+                })
+                kWHt = (sizeSum * kWhPerByteDataCenter) + (sizeSum * kWhPerByteNetwork);
+                gCO2 = (defaultCarbonIntensityFactorIngCO2PerKWh * kWHt);
+                console.log(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`);
+                resolve(allTrackers[0].trackerlink);
+
+            }
         }
-    }
-    req.onerror = function (event) {
-        alert('error in cursor request ' + event.target.errorCode);
-    }
+        req.onerror = function (event) {
+            alert('error in cursor request ' + event.target.errorCode);
+            resolve(event.target.errorCode);
+        }
+    })
 }
 
+async function handleMessage(request, sender, sendResponse) {
+    var resp = sendResponse;
 
-function handleMessage(request, sender, sendResponse) {
-    // console.log("Message from the content script: " +
-    //     extractHostName(request.url));
-    // console.log(request)
-    getAndDisplayTrackers(extractHostName(request.url))
-    sendResponse({
-        response: `I can send you trackers!!`
-    });
+    function testFunction() {
+        var trackers = await getAndDisplayTrackers(request.url)
+        resp({
+            response: `What about these trackers ${trackers}`
+        })
+    }
+    testFunction()
+    return true;
 }
-
 
 browser.runtime.onMessage.addListener(handleMessage);

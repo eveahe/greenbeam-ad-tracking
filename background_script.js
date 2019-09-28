@@ -61,9 +61,9 @@ function checkUrlIsTracker(requestDetails) {
     //All the other attributes exist in the response header.
     let filter = browser.webRequest.filterResponseData(requestDetails.requestId);
     filter.ondata = event => {
-        var urlHostName = extractHostName(requestDetails.url);
         //Giving our disconnect data list some time to load. 
         if (disconnectData !== undefined) {
+            var urlHostName = extractHostName(requestDetails.url);
             var jsonLength = Object.keys(disconnectData).length;
             for (var i = 0; i < jsonLength; i++) {
                 var trackerName = Object.keys(disconnectData)[i];
