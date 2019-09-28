@@ -1,7 +1,7 @@
 function publishTrackers() {
     const trackerDiv = document.createElement("div");
-    trackerDiv.textContent = "Who's watching me and at what cost?"
-    trackerDiv.className = 'trackerDiv';
+    trackerDiv.textContent = "Who is watching me and at what cost?";
+    trackerDiv.className = "trackerDiv";
     document.body.appendChild(trackerDiv);
     const clickMe = document.createElement("button");
     clickMe.id = "clickMe"
@@ -10,7 +10,9 @@ function publishTrackers() {
 
 }
 
+// if (!trackerDiv) {
 publishTrackers()
+// }
 
 function handleResponse(message) {
     console.log(`Message from the background script:  ${message.response}`);
@@ -26,5 +28,11 @@ function sendDataMessage() {
     });
     sending.then(handleResponse, handleError);
 }
+document.addEventListener("click", sendDataMessage
 
-window.addEventListener("click", sendDataMessage);
+    // function (event) {
+    //     if (!event.target.matches('#clickMe')) {
+    //         return;
+    //     }
+    // sendDataMessage
+);

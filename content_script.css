@@ -1,12 +1,12 @@
-.helloTDiv {
+.trackerDiv {
     background-color: red;
     position: fixed;
-    font-size: 2em;
+    font-size: 1em;
     font-family: monospace;
     font-weight: bold;
-    padding-top: 50px;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     top: '50%';
     width: '50%';
     bottom: 30px;
@@ -17,4 +17,6 @@
 #clickMe {
     background-color: white;
     font-family: monospace;
+    padding: 10px;
+    font-size: .75em;
 }

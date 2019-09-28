@@ -4,6 +4,11 @@
 
 let db;
 
+//These come from the 1ByteModel from TheShiftProject in their Carbonalyser extension.
+const defaultCarbonIntensityFactorIngCO2PerKWh = 519;
+const kWhPerByteDataCenter = 0.00000000072;
+const kWhPerByteNetwork = 0.00000000152;
+
 //Currently not actually using this function below...?
 function initializeDB() {
     if (!('indexedDB' in window)) {
@@ -57,10 +62,6 @@ function addTrackerData(db, t, tl, to, s) {
     };
     store.add(tracker);
 
-    // // Wait for the database transaction to complete
-    // tx.oncomplete = function () {
-    //     console.log('stored tracker!')
-    // }
     tx.onerror = function (event) {
         alert('error storing tracker ' + event.target.errorCode);
     }
@@ -72,6 +73,10 @@ function getAndDisplayTrackers() {
     let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
     // we collect in the allTrackers array
     let allTrackers = [];
+    let sizeSum = 0;
+    let kWHt = 0;
+    let gCO2 = 0;
+
 
     var index = store.index('trackerorigin');
     //Note that right now this is just filtering for origins matching the NYTimes.
@@ -86,7 +91,13 @@ function getAndDisplayTrackers() {
             allTrackers.push(cursor.value);
             cursor.continue();
         } else {
-            console.log(allTrackers[0].trackerlink)
+            //Calcating the amount for this domain
+            allTrackers.forEach(function (e) {
+                sizeSum += e.size;
+            })
+            kWHt = (sizeSum * kWhPerByteDataCenter) + (sizeSum * kWhPerByteNetwork)
+            gCO2 = (defaultCarbonIntensityFactorIngCO2PerKWh * kWHt)
+            console.log(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`)
         }
     }
     req.onerror = function (event) {
@@ -96,8 +107,9 @@ function getAndDisplayTrackers() {
 
 
 function handleMessage(request, sender, sendResponse) {
-    console.log("Message from the content script: " +
-        request.greeting);
+    // console.log("Message from the content script: " +
+    //     request.greeting);
+    getAndDisplayTrackers()
     sendResponse({
         response: `I can send you trackers!!`
     });
