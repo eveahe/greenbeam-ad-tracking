@@ -1,12 +1,12 @@
-// (function () {
 function publishTrackers() {
-    const helloTDiv = document.createElement("div");
-    // helloTDiv.textContent = "test test!!"
-    helloTDiv.className = 'helloTDiv';
-    document.body.appendChild(helloTDiv);
-    const testButton = document.createElement("button");
-    testButton.textContent = "click me!!"
-    helloTDiv.appendChild(testButton);
+    const trackerDiv = document.createElement("div");
+    trackerDiv.textContent = "Who's watching me and at what cost?"
+    trackerDiv.className = 'trackerDiv';
+    document.body.appendChild(trackerDiv);
+    const clickMe = document.createElement("button");
+    clickMe.id = "clickMe"
+    clickMe.textContent = "click me!!"
+    trackerDiv.appendChild(clickMe);
 
 }
 

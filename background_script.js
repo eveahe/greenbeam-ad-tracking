@@ -49,7 +49,8 @@ function matchingOrigin(a, o) {
     if (a.includes(o)) {
         return true;
     } else if (o === undefined) {
-        console.log(Err)
+        //This means that the "tracker site" is the site being visited.
+        return true;
     } else {
         return false;
     }
@@ -74,7 +75,12 @@ function checkUrlIsTracker(requestDetails) {
                         return urlHostName.indexOf(v) >=
                             0;
                     })) {
-                    if (!matchingOrigin(urlHostName, extractHostName(requestDetails.originUrl))) {
+                    //We are checking to make sure the "tracker" is not the tab open
+                    var originHost;
+                    if (requestDetails.originUrl) {
+                        originHost = extractHostName(requestDetails.originUrl)
+                    }
+                    if (!matchingOrigin(urlHostName, originHost)) {
                         console.log(`It seems that there is a match for ${urlHostName} in the sites run by the tracker ${trackerName}`);
                         addTrackerData(db, trackerName, urlHostName, extractHostName(requestDetails.originUrl), size);
                     }
@@ -88,7 +94,6 @@ function checkUrlIsTracker(requestDetails) {
         filter.disconnect();
     }
 }
-
 
 browser.webRequest.onHeadersReceived.addListener(
     checkUrlIsTracker, {

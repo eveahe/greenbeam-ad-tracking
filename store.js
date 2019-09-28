@@ -57,17 +57,15 @@ function addTrackerData(db, t, tl, to, s) {
     };
     store.add(tracker);
 
-    // Wait for the database transaction to complete
-    tx.oncomplete = function () {
-        console.log('stored tracker!')
-    }
+    // // Wait for the database transaction to complete
+    // tx.oncomplete = function () {
+    //     console.log('stored tracker!')
+    // }
     tx.onerror = function (event) {
         alert('error storing tracker ' + event.target.errorCode);
     }
 
 }
-
-
 
 function getAndDisplayTrackers() {
     let tx = db.transaction(['trackers'], 'readonly');
@@ -76,6 +74,8 @@ function getAndDisplayTrackers() {
     let allTrackers = [];
 
     var index = store.index('trackerorigin');
+    //Note that right now this is just filtering for origins matching the NYTimes.
+    //Should soon be changed to just the current origin tab. 
     var singleKeyRange = IDBKeyRange.only('www.nytimes.com');
     let req = index.openCursor(singleKeyRange, 'prev')
 
@@ -98,7 +98,6 @@ function getAndDisplayTrackers() {
 function handleMessage(request, sender, sendResponse) {
     console.log("Message from the content script: " +
         request.greeting);
-    // console.log(`I can send you trackers!! ${tracker}`)
     sendResponse({
         response: `I can send you trackers!!`
     });
@@ -106,6 +105,3 @@ function handleMessage(request, sender, sendResponse) {
 
 
 browser.runtime.onMessage.addListener(handleMessage);
-
-
-// setInterval(getAndDisplayTrackers, 10000)
