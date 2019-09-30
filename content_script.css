@@ -14,17 +14,9 @@
     box-shadow: 10px 10px lightgray;
 }
 
-<<<<<<< Updated upstream
 #clickMe {
-    background-color: white;
+    background-color: whitesmoke;
     font-family: monospace;
     padding: 10px;
     font-size: .75em;
-=======
-button {
-    margin: 10px;
-    font-size: .75em;
-    font-family: monospace;
-    background-color: whitesmoke;
->>>>>>> Stashed changes
 }

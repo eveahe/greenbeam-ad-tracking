@@ -14,7 +14,7 @@ publishTrackers()
 // }
 
 function handleResponse(message) {
-    console.log(`Message from the background script:  ${message.response}`);
+    console.log(`Message from the background script: ${message}`);
 }
 
 function handleError(error) {
@@ -29,4 +29,4 @@ function sendDataMessage() {
     sending.then(handleResponse, handleError);
 }
 
-document.getElementById('testButton').addEventListener("click", sendDataMessage);
+document.getElementById('clickMe').addEventListener("click", sendDataMessage);

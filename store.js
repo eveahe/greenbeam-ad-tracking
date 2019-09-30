@@ -74,7 +74,7 @@ function addTrackerData(db, t, tl, to, s) {
 
 }
 
-async function getAndDisplayTrackers(currentURL) {
+async function getTrackers(currentURL) {
     return new Promise((resolve, reject) => {
         let tx = db.transaction(['trackers'], 'readonly');
         let store = tx.objectStore('trackers'); // Create a cursor request to get all items in the store, which 
@@ -105,7 +105,7 @@ async function getAndDisplayTrackers(currentURL) {
                 kWHt = (sizeSum * kWhPerByteDataCenter) + (sizeSum * kWhPerByteNetwork);
                 gCO2 = (defaultCarbonIntensityFactorIngCO2PerKWh * kWHt);
                 console.log(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`);
-                resolve(allTrackers[0].trackerlink);
+                resolve(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`);
 
             }
         }
@@ -116,17 +116,13 @@ async function getAndDisplayTrackers(currentURL) {
     })
 }
 
-async function handleMessage(request, sender, sendResponse) {
-    var resp = sendResponse;
-
-    function testFunction() {
-        var trackers = await getAndDisplayTrackers(request.url)
-        resp({
-            response: `What about these trackers ${trackers}`
+function handleMessage(request, sender, sendResponse) {
+    return new Promise(resolve => {
+        sendResponse({
+            trackers: resolve(getTrackers(extractHostName(request.url)))
         })
-    }
-    testFunction()
-    return true;
-}
+    })
+};
+
 
 browser.runtime.onMessage.addListener(handleMessage);
