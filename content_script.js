@@ -7,14 +7,16 @@ function publishTrackers() {
     clickMe.id = "clickMe"
     clickMe.textContent = "click me!!"
     trackerDiv.appendChild(clickMe);
+    const numTrackers = document.createElement("div");
+    numTrackers.id = 'numTrackers'
+    trackerDiv.appendChild(numTrackers);
 }
 
-// if (!trackerDiv) {
 publishTrackers()
-// }
 
 function handleResponse(message) {
-    console.log(`Message from the background script: ${message}`);
+    var numTrackers = message;
+    document.getElementById('numTrackers').textContent = numTrackers;
 }
 
 function handleError(error) {
