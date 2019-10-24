@@ -4,11 +4,10 @@
     font-size: 1em;
     font-family: monospace;
     font-weight: bold;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    top: '50%';
-    width: '50%';
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 400px;
     bottom: 30px;
     right: 30px;
     box-shadow: 10px 10px lightgray;
@@ -17,6 +16,15 @@
 #clickMe {
     background-color: whitesmoke;
     font-family: monospace;
+    color: black;
     padding: 10px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
     font-size: .75em;
+
+}
+
+#numTrackers {
+    margin-bottom: 15px;
 }

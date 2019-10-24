@@ -105,7 +105,8 @@ async function getTrackers(currentURL) {
                 kWHt = (sizeSum * kWhPerByteDataCenter) + (sizeSum * kWhPerByteNetwork);
                 gCO2 = (defaultCarbonIntensityFactorIngCO2PerKWh * kWHt);
                 console.log(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`);
-                resolve(`The kWHt total is: ${kWHt} and the gCO2 total is ${gCO2}`);
+                resolve(`So far the ad trackers on this domain: used an est ${kWHt.toFixed(2)} kWHt total with an est ${gCO2.toFixed(2)} gCO2 total impact.
+                For comparison: a car traveling one km releases 220 gCO2.`);
 
             }
         }

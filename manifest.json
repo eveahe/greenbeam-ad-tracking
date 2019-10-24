@@ -18,6 +18,11 @@
       "store.js"
     ]
   },
+  "browser_action": {
+    "default_icon": "icons/icon.png",
+    "default_title": "Greenbeam Ads",
+    "default_popup": "popup/greenbeam_ads.html"
+  },
   "content_scripts": [{
     "matches": [
       "*://*/*"

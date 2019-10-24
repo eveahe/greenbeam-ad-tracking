@@ -16,7 +16,15 @@ publishTrackers()
 
 function handleResponse(message) {
     var numTrackers = message;
-    document.getElementById('numTrackers').textContent = numTrackers;
+    var numTrackersDiv = document.getElementById('numTrackers');
+    var clickMe = document.getElementById('clickMe');
+    if (clickMe.textContent === "click me!!") {
+        numTrackersDiv.textContent = numTrackers;
+        clickMe.textContent = "eep."
+    } else {
+        numTrackersDiv.textContent = "";
+        clickMe.textContent = "click me!!";
+    }
 }
 
 function handleError(error) {
